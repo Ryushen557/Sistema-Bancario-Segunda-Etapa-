@@ -4,7 +4,7 @@ class CuentasModel {
     static añadirCuentaPrestamo(cuenta) {
         return new Promise((resolve, reject) => {
             const { id, usuarioId, balance, tasaInteres, fechaProximoPago } = cuenta;
-            pool.query('INSERT INTO cuentas (id, usuarioId, balance, tasaInteres, fechaProximoPago, tipo) VALUES (?, ?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, fechaProximoPago, 'prestamo'], (error, results) => {
+            pool.query('INSERT INTO prestamos (id, usuarioId, balance, tasaInteres, fechaProximoPago, tipo) VALUES (?, ?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, fechaProximoPago, 'prestamo'], (error, results) => {
                 if (error) {
                     return reject(error);
                 }
@@ -16,7 +16,7 @@ class CuentasModel {
     static añadirCuentaAhorro(cuenta) {
         return new Promise((resolve, reject) => {
             const { id, usuarioId, balance, tasaInteres } = cuenta;
-            pool.query('INSERT INTO cuentas (id, usuarioId, balance, tasaInteres, tipo) VALUES (?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, 'ahorro'], (error, results) => {
+            pool.query('INSERT INTO ahorros (id, usuarioId, balance, tasaInteres, tipo) VALUES (?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, 'ahorro'], (error, results) => {
                 if (error) {
                     return reject(error);
                 }
@@ -28,7 +28,7 @@ class CuentasModel {
     static editarCuentaPrestamo(id, cuenta) {
         return new Promise((resolve, reject) => {
             const { balance, tasaInteres, fechaProximoPago } = cuenta;
-            pool.query('UPDATE cuentas SET balance = ?, tasaInteres = ?, fechaProximoPago = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, fechaProximoPago, id, 'prestamo'], (error, results) => {
+            pool.query('UPDATE prestamos SET balance = ?, tasaInteres = ?, fechaProximoPago = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, fechaProximoPago, id, 'prestamo'], (error, results) => {
                 if (error) {
                     return reject(error);
                 }
@@ -40,7 +40,7 @@ class CuentasModel {
     static editarCuentaAhorro(id, cuenta) {
         return new Promise((resolve, reject) => {
             const { balance, tasaInteres } = cuenta;
-            pool.query('UPDATE cuentas SET balance = ?, tasaInteres = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, id, 'ahorro'], (error, results) => {
+            pool.query('UPDATE ahorros SET balance = ?, tasaInteres = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, id, 'ahorro'], (error, results) => {
                 if (error) {
                     return reject(error);
                 }

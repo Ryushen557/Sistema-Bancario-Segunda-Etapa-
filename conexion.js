@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createConnection({
-    host: 'localhost', 
-    user: 'root',      
-    password: '',      
-    database: 'sistema_bancario'
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'Sistema_Bancario'
 });
 
 pool.connect(function(error){
@@ -14,4 +14,5 @@ pool.connect(function(error){
     }
     console.log('Conectado a la base de datos MySQL.');
 });
+
 module.exports = pool;

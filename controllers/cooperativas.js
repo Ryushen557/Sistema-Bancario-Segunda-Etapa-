@@ -43,4 +43,4 @@ class CooperativaController {
     }
 }
 
-module.exports= new CooperativaController()
+module.exports = new CooperativaController();

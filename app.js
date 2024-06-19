@@ -26,9 +26,8 @@ app.use('/usuarios', usuarioRouter);
 app.use('/cuentas', cuentaRouter);
 app.use('/cooperativas', cooperativaRouter);
 
-// Inicia el servidor
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
-  });
-  
+});
+
 module.exports = app;
