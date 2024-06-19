@@ -1,93 +1,62 @@
-const db = require('../conexion');
+const pool = require('../conexion');
 
-class UsuarioModel {
-    obtenerTodosLosUsuarios() {
+class UsuariosModel {
+    static obtenerTodosLosUsuarios() {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM usuarios', (error, results) => {
+            pool.query('SELECT * FROM usuarios', (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    añadirUsuario(id, nombre, email) {
+    static añadirUsuario(usuario) {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO usuarios (id, nombre, email) VALUES (?, ?, ?)', [id, nombre, email], (error, results) => {
+            const { id, nombre, email } = usuario;
+            pool.query('INSERT INTO usuarios (id, nombre, email) VALUES (?, ?, ?)', [id, nombre, email], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    editarUsuario(id, nombre, email) {
+    static editarUsuario(id, usuario) {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?', [nombre, email, id], (error, results) => {
+            const { nombre, email } = usuario;
+            pool.query('UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?', [nombre, email, id], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    borrarUsuario(id) {
+    static borrarUsuario(id) {
         return new Promise((resolve, reject) => {
-            db.query('DELETE FROM usuarios WHERE id = ?', [id], (error, results) => {
+            pool.query('DELETE FROM usuarios WHERE id = ?', [id], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    obtenerDetallesUsuario(id) {
+    static obtenerDetallesUsuario(id) {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM usuarios WHERE id = ?', [id], (error, results) => {
+            pool.query('SELECT * FROM usuarios WHERE id = ?', [id], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results[0]);
             });
-        });
-    }
-
-    obtenerCuentasUsuario(id) {
-        return new Promise((resolve, reject) => {
-            const cuentasPrestamos = new Promise((resolve, reject) => {
-                db.query('SELECT * FROM prestamos WHERE usuarioId = ?', [id], (error, results) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
-
-            const cuentasAhorros = new Promise((resolve, reject) => {
-                db.query('SELECT * FROM ahorros WHERE usuarioId = ?', [id], (error, results) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
-
-            Promise.all([cuentasPrestamos, cuentasAhorros])
-                .then(results => resolve({ cuentasPrestamos: results[0], cuentasAhorros: results[1] }))
-                .catch(error => reject(error));
         });
     }
 }
 
-module.exports = new UsuarioModel();
+module.exports = UsuariosModel;

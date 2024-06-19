@@ -1,89 +1,91 @@
-const db = require('../conexion');
+const pool = require('../conexion');
 
-class CuentaModel {
-    añadirCuentaPrestamo(id, usuarioId, balance, tasaInteres, fechaProximoPago) {
+class CuentasModel {
+    static añadirCuentaPrestamo(cuenta) {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO cuentas (id, tipo, usuarioId, balance, tasaInteres, fechaProximoPago) VALUES (?, "prestamo", ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, fechaProximoPago], (error, results) => {
+            const { id, usuarioId, balance, tasaInteres, fechaProximoPago } = cuenta;
+            pool.query('INSERT INTO cuentas (id, usuarioId, balance, tasaInteres, fechaProximoPago, tipo) VALUES (?, ?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, fechaProximoPago, 'prestamo'], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    añadirCuentaAhorro(id, usuarioId, balance, tasaInteres) {
+    static añadirCuentaAhorro(cuenta) {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO cuentas (id, tipo, usuarioId, balance, tasaInteres) VALUES (?, "ahorro", ?, ?, ?)', [id, usuarioId, balance, tasaInteres], (error, results) => {
+            const { id, usuarioId, balance, tasaInteres } = cuenta;
+            pool.query('INSERT INTO cuentas (id, usuarioId, balance, tasaInteres, tipo) VALUES (?, ?, ?, ?, ?)', [id, usuarioId, balance, tasaInteres, 'ahorro'], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    editarCuentaPrestamo(id, balance, tasaInteres, fechaProximoPago) {
+    static editarCuentaPrestamo(id, cuenta) {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE cuentas SET balance = ?, tasaInteres = ?, fechaProximoPago = ? WHERE id = ? AND tipo = "prestamo"', [balance, tasaInteres, fechaProximoPago, id], (error, results) => {
+            const { balance, tasaInteres, fechaProximoPago } = cuenta;
+            pool.query('UPDATE cuentas SET balance = ?, tasaInteres = ?, fechaProximoPago = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, fechaProximoPago, id, 'prestamo'], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    editarCuentaAhorro(id, balance, tasaInteres) {
+    static editarCuentaAhorro(id, cuenta) {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE cuentas SET balance = ?, tasaInteres = ? WHERE id = ? AND tipo = "ahorro"', [balance, tasaInteres, id], (error, results) => {
+            const { balance, tasaInteres } = cuenta;
+            pool.query('UPDATE cuentas SET balance = ?, tasaInteres = ? WHERE id = ? AND tipo = ?', [balance, tasaInteres, id, 'ahorro'], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    eliminarCuenta(id) {
+    static eliminarCuenta(id) {
         return new Promise((resolve, reject) => {
-            db.query('DELETE FROM cuentas WHERE id = ?', [id], (error, results) => {
+            pool.query('DELETE FROM cuentas WHERE id = ?', [id], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    mostrarProximaFechaPago(id) {
+    static mostrarProximaFechaPago(id) {
         return new Promise((resolve, reject) => {
-            db.query('SELECT fechaProximoPago FROM cuentas WHERE id = ? AND tipo = "prestamo"', [id], (error, results) => {
+            pool.query('SELECT fechaProximoPago FROM cuentas WHERE id = ? AND tipo = ?', [id, 'prestamo'], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results[0].fechaProximoPago);
             });
         });
     }
 
-    mostrarResumenCuentas() {
+    static mostrarResumenCuentas() {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM cuentas', (error, results) => {
+            pool.query('SELECT tipo, SUM(balance) AS totalBalance, AVG(tasaInteres) AS promedioTasaInteres FROM cuentas GROUP BY tipo', (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                const resumen = results.reduce((acc, row) => {
+                    acc[`total${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.totalBalance;
+                    acc[`promedioTasaInteres${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.promedioTasaInteres;
+                    return acc;
+                }, {});
+                resolve(resumen);
             });
         });
     }
 }
 
-module.exports = new CuentaModel();
+module.exports = CuentasModel;

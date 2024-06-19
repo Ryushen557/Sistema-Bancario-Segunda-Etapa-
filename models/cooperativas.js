@@ -1,65 +1,83 @@
-const db = require('../conexion');
+const pool = require('../conexion');
 
 class CooperativaModel {
-    obtenerTodasLasCooperativas() {
+    static añadirCooperativa(cooperativa) {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM cooperativas', (error, results) => {
+            const { id, nombre, usuariosDeCooperativa } = cooperativa;
+            pool.query('INSERT INTO cooperativas (id, nombre) VALUES (?, ?)', [id, nombre], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                const cooperativaId = results.insertId;
+                const usuarioCooperativaPromises = usuariosDeCooperativa.map(usuarioId => 
+                    pool.query('INSERT INTO usuario_cooperativa (cooperativaId, usuarioId) VALUES (?, ?)', [cooperativaId, usuarioId])
+                );
+                Promise.all(usuarioCooperativaPromises)
+                    .then(() => resolve(results))
+                    .catch(reject);
             });
         });
     }
 
-    añadirCooperativa(id, nombre, direccion) {
+    static eliminarUsuarioDeCooperativa(cooperativaId, usuarioId) {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO cooperativas (id, nombre, direccion) VALUES (?, ?, ?)', [id, nombre, direccion], (error, results) => {
+            pool.query('DELETE FROM usuario_cooperativa WHERE cooperativaId = ? AND usuarioId = ?', [cooperativaId, usuarioId], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    editarCooperativa(id, nombre, direccion) {
+    static relacionarUsuarioConCooperativa(cooperativaId, usuarioId) {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE cooperativas SET nombre = ?, direccion = ? WHERE id = ?', [nombre, direccion, id], (error, results) => {
+            pool.query('INSERT INTO usuario_cooperativa (cooperativaId, usuarioId) VALUES (?, ?)', [cooperativaId, usuarioId], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    borrarCooperativa(id) {
+    static obtenerTodasCooperativas() {
         return new Promise((resolve, reject) => {
-            db.query('DELETE FROM cooperativas WHERE id = ?', [id], (error, results) => {
+            pool.query('SELECT * FROM cooperativas', (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results);
             });
         });
     }
 
-    obtenerDetallesCooperativa(id) {
+    static obtenerDetallesCooperativa(id) {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM cooperativas WHERE id = ?', [id], (error, results) => {
+            pool.query('SELECT * FROM cooperativas WHERE id = ?', [id], (error, results) => {
                 if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
+                    return reject(error);
                 }
+                resolve(results[0]);
+            });
+        });
+    }
+
+    static obtenerResumen() {
+        return new Promise((resolve, reject) => {
+            pool.query(`
+                SELECT 
+                    (SELECT COUNT(*) FROM ahorros) AS totalAhorros, 
+                    (SELECT COUNT(*) FROM prestamos) AS totalPrestamos, 
+                    (SELECT COUNT(*) FROM usuarios) AS totalUsuarios 
+                FROM DUAL`, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results[0]);
             });
         });
     }
 }
 
-module.exports = new CooperativaModel();
+module.exports = CooperativaModel;

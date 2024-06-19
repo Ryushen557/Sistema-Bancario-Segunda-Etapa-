@@ -1,58 +1,46 @@
 const CooperativaModel = require('../models/cooperativas');
 
 class CooperativaController {
-    ObtenerTodasLasCooperativas(req, res) {
-        CooperativaModel.obtenerTodasLasCooperativas()
-            .then(rows => res.json(rows))
-            .catch(error => res.status(500).json({ mensaje: 'Error al obtener cooperativas', error }));
-    }
-
     AñadirCooperativa(req, res) {
-        const { id, nombre, direccion } = req.body;
-        CooperativaModel.añadirCooperativa(id, nombre, direccion)
-            .then(() => res.status(201).json({ mensaje: 'Se ha añadido la cooperativa', cooperativa: { id, nombre, direccion } }))
-            .catch(error => res.status(500).json({ mensaje: 'Error al añadir cooperativa', error }));
+        const { id, nombre, usuariosDeCooperativa } = req.body;
+        const nuevaCooperativa = { id: parseInt(id), nombre, usuariosDeCooperativa };
+        CooperativaModel.añadirCooperativa(nuevaCooperativa)
+            .then(results => res.status(201).json({ mensaje: 'Se ha añadido la cooperativa', cooperativa: nuevaCooperativa }))
+            .catch(error => res.status(500).json({ error: error.message }));
     }
 
-    EditarCooperativa(req, res) {
-        const { id } = req.params;
-        const { nombre, direccion } = req.body;
-        CooperativaModel.editarCooperativa(id, nombre, direccion)
-            .then(result => {
-                if (result.affectedRows > 0) {
-                    res.json({ mensaje: 'Cooperativa actualizada', cooperativa: { id, nombre, direccion } });
-                } else {
-                    res.status(404).json({ mensaje: 'No se encontró la cooperativa en la base de datos' });
-                }
-            })
-            .catch(error => res.status(500).json({ mensaje: 'Error al actualizar cooperativa', error }));
+    EliminarUsuarioDeCooperativa(req, res) {
+        const { cooperativaId, usuarioId } = req.params;
+        CooperativaModel.eliminarUsuarioDeCooperativa(cooperativaId, usuarioId)
+            .then(results => res.json({ mensaje: 'Usuario eliminado de la cooperativa' }))
+            .catch(error => res.status(500).json({ error: error.message }));
     }
 
-    BorrarCooperativa(req, res) {
-        const { id } = req.params;
-        CooperativaModel.borrarCooperativa(id)
-            .then(result => {
-                if (result.affectedRows > 0) {
-                    res.json({ mensaje: 'Cooperativa eliminada' });
-                } else {
-                    res.status(404).json({ mensaje: 'No se encontró la cooperativa en la base de datos' });
-                }
-            })
-            .catch(error => res.status(500).json({ mensaje: 'Error al eliminar cooperativa', error }));
+    RelacionarUsuarioConCooperativa(req, res) {
+        const { cooperativaId, usuarioId } = req.params;
+        CooperativaModel.relacionarUsuarioConCooperativa(cooperativaId, usuarioId)
+            .then(results => res.json({ mensaje: 'Usuario añadido a la cooperativa' }))
+            .catch(error => res.status(500).json({ error: error.message }));
+    }
+
+    ObtenerTodasCooperativas(req, res) {
+        CooperativaModel.obtenerTodasCooperativas()
+            .then(cooperativas => res.render('cooperativas', { cooperativas }))
+            .catch(error => res.status(500).json({ error: error.message }));
     }
 
     ObtenerDetallesCooperativa(req, res) {
         const { id } = req.params;
         CooperativaModel.obtenerDetallesCooperativa(id)
-            .then(rows => {
-                if (rows.length > 0) {
-                    res.json(rows[0]);
+            .then(cooperativa => {
+                if (cooperativa) {
+                    res.render('detalleCooperativa', { cooperativa });
                 } else {
                     res.status(404).json({ mensaje: 'No se encontró la cooperativa en la base de datos' });
                 }
             })
-            .catch(error => res.status(500).json({ mensaje: 'Error al obtener detalles de la cooperativa', error }));
+            .catch(error => res.status(500).json({ error: error.message }));
     }
 }
 
-module.exports = new CooperativaController();
+module.exports= new CooperativaController()
