@@ -9,19 +9,30 @@ class CooperativaModel {
                     return reject(error);
                 }
                 const cooperativaId = results.insertId;
-                const usuarioCooperativaPromises = usuariosDeCooperativa.map(usuarioId => 
-                    pool.query('INSERT INTO usuario_cooperativa (cooperativaId, usuarioId) VALUES (?, ?)', [cooperativaId, usuarioId])
-                );
-                Promise.all(usuarioCooperativaPromises)
-                    .then(() => resolve(results))
-                    .catch(reject);
+                if (usuariosDeCooperativa && usuariosDeCooperativa.length > 0) {
+                    const usuarioPromises = usuariosDeCooperativa.map(usuarioId => 
+                        new Promise((resolve, reject) => {
+                            pool.query('UPDATE usuarios SET cooperativaId = ? WHERE id = ?', [cooperativaId, usuarioId], (error, results) => {
+                                if (error) {
+                                    return reject(error);
+                                }
+                                resolve(results);
+                            });
+                        })
+                    );
+                    Promise.all(usuarioPromises)
+                        .then(() => resolve(results))
+                        .catch(reject);
+                } else {
+                    resolve(results);
+                }
             });
         });
     }
 
     static eliminarUsuarioDeCooperativa(cooperativaId, usuarioId) {
         return new Promise((resolve, reject) => {
-            pool.query('DELETE FROM usuario_cooperativa WHERE cooperativaId = ? AND usuarioId = ?', [cooperativaId, usuarioId], (error, results) => {
+            pool.query('UPDATE usuarios SET cooperativaId = NULL WHERE id = ? AND cooperativaId = ?', [usuarioId, cooperativaId], (error, results) => {
                 if (error) {
                     return reject(error);
                 }
@@ -32,7 +43,7 @@ class CooperativaModel {
 
     static relacionarUsuarioConCooperativa(cooperativaId, usuarioId) {
         return new Promise((resolve, reject) => {
-            pool.query('INSERT INTO usuario_cooperativa (cooperativaId, usuarioId) VALUES (?, ?)', [cooperativaId, usuarioId], (error, results) => {
+            pool.query('UPDATE usuarios SET cooperativaId = ? WHERE id = ?', [cooperativaId, usuarioId], (error, results) => {
                 if (error) {
                     return reject(error);
                 }

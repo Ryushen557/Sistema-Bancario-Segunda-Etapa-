@@ -49,9 +49,20 @@ class CuentasModel {
         });
     }
 
-    static eliminarCuenta(id) {
+    static eliminarCuentaPrestamo(id) {
         return new Promise((resolve, reject) => {
-            pool.query('DELETE FROM cuentas WHERE id = ?', [id], (error, results) => {
+            pool.query('DELETE FROM prestamos WHERE id = ?', [id], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+    }
+
+    static eliminarCuentaAhorro(id) {
+        return new Promise((resolve, reject) => {
+            pool.query('DELETE FROM ahorros WHERE id = ?', [id], (error, results) => {
                 if (error) {
                     return reject(error);
                 }

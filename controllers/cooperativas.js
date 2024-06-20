@@ -3,7 +3,7 @@ const CooperativaModel = require('../models/cooperativas');
 class CooperativaController {
     AñadirCooperativa(req, res) {
         const { id, nombre, usuariosDeCooperativa } = req.body;
-        const nuevaCooperativa = { id: parseInt(id), nombre, usuariosDeCooperativa };
+        const nuevaCooperativa = { id: parseInt(id), nombre, usuariosDeCooperativa: usuariosDeCooperativa || [] };
         CooperativaModel.añadirCooperativa(nuevaCooperativa)
             .then(results => res.status(201).json({ mensaje: 'Se ha añadido la cooperativa', cooperativa: nuevaCooperativa }))
             .catch(error => res.status(500).json({ error: error.message }));

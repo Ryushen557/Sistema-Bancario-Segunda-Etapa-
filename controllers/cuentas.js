@@ -33,9 +33,16 @@ class CuentaController {
             .catch(error => res.status(500).json({ error: error.message }));
     }
 
-    EliminarCuenta(req, res) {
+    EliminarCuentaPrestamo(req, res) {
         const { id } = req.params;
-        CuentaModel.eliminarCuenta(id)
+        CuentaModel.eliminarCuentaPrestamo(id)
+            .then(results => res.json({ mensaje: 'Cuenta eliminada' }))
+            .catch(error => res.status(500).json({ error: error.message }));
+    }
+
+    EliminarCuentaAhorro(req, res) {
+        const { id } = req.params;
+        CuentaModel.eliminarCuentaAhorro(id)
             .then(results => res.json({ mensaje: 'Cuenta eliminada' }))
             .catch(error => res.status(500).json({ error: error.message }));
     }

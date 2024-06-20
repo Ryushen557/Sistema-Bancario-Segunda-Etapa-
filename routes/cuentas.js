@@ -11,7 +11,9 @@ router.put('/prestamos/:id', (req, res) => cuentaController.EditarCuentaPrestamo
 router.put('/ahorros/:id', (req, res) => cuentaController.EditarCuentaAhorro(req, res));
 
 // Eliminar cuentas
-router.delete('/:id', (req, res) => cuentaController.EliminarCuenta(req, res));
+router.delete('/prestamos/:id', (req, res) => cuentaController.EliminarCuentaPrestamo(req, res));
+
+router.delete('/ahorros/:id', (req, res) => cuentaController.EliminarCuentaAhorro(req, res));
 
 // Mostrar próxima fecha de pago
 router.get('/:id/proximafecha', (req, res) => cuentaController.MostrarProximaFechaPago(req, res));
