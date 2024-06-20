@@ -1,13 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Cooperativas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperativas - SISTEMA BANCARIO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        li {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li:hover {
+            background-color: #b2ebf2;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #00796b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .nav a:hover {
+            background-color: #004d40;
+        }
+    </style>
 </head>
 <body>
-    <h1>Lista de Cooperativas</h1>
+    <h1>Cooperativas - SISTEMA BANCARIO</h1>
+    <div class="nav">
+        <a href="/index">Inicio</a>
+        <a href="/usuarios">Usuarios</a>
+    </div>
     <ul>
         <% cooperativas.forEach(cooperativa => { %>
-            <li><%= cooperativa.nombre %></li>
+            <li>ID: <%= cooperativa.id %> - <%= cooperativa.nombre %></li>
         <% }); %>
     </ul>
 </body>
