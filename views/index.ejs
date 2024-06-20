@@ -1,16 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA BANCARIO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .menu a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #00796b;
+            padding: 15px 30px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .menu a:hover {
+            background-color: #004d40;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #004d40;
+        }
+    </style>
 </head>
 <body>
-    <h1><%= title %></h1>
-    <p>Bienvenido al Sistema Bancario Social.</p>
-    <ul>
-        <li><a href="/usuarios">Gestionar Usuarios</a></li>
-        <li><a href="/cuentas">Gestionar Cuentas</a></li>
-        <li><a href="/cooperativas">Gestionar Cooperativas</a></li>
-    </ul>
+    <div class="container">
+        <h1>SISTEMA BANCARIO</h1>
+        <img src="/views/imagen/UVM.png" alt="Universidad">
+        <div class="menu">
+            <a href="/usuarios">Usuarios</a>
+            <a href="/cooperativas">Cooperativas</a>
+        </div>
+    </div>
+    <div class="footer">
+        Integrantes:<br>
+        Br. Miguel Suarez. CI. V-28.206.469<br>
+        Br. Rhonny Jaimes. CI. V-29.718.095<br>
+        Br. Henry Hernandez. CI. V-30.808.485<br>
+        Profesor: Roberto Di Michele<br>
+        Materia: Backend
+    </div>
 </body>
 </html>
