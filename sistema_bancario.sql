@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-06-2024 a las 22:37:29
+-- Tiempo de generación: 24-06-2024 a las 17:40:34
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -46,14 +46,6 @@ CREATE TABLE `cooperativas` (
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `cooperativas`
---
-
-INSERT INTO `cooperativas` (`id`, `nombre`) VALUES
-(1, 'ABC'),
-(2, 'DEF');
-
 -- --------------------------------------------------------
 
 --
@@ -83,13 +75,6 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombre`, `email`, `cooperativaId`) VALUES
-(1, 'Henry Hernandez', 'henryjosuehp@gmail.com', NULL);
-
---
 -- Índices para tablas volcadas
 --
 
@@ -97,7 +82,8 @@ INSERT INTO `usuarios` (`id`, `nombre`, `email`, `cooperativaId`) VALUES
 -- Indices de la tabla `ahorros`
 --
 ALTER TABLE `ahorros`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_ahorros_usuarios` (`usuarioId`);
 
 --
 -- Indices de la tabla `cooperativas`
@@ -109,7 +95,8 @@ ALTER TABLE `cooperativas`
 -- Indices de la tabla `prestamos`
 --
 ALTER TABLE `prestamos`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_prestamos_usuarios` (`usuarioId`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -138,17 +125,29 @@ ALTER TABLE `cooperativas`
 -- AUTO_INCREMENT de la tabla `prestamos`
 --
 ALTER TABLE `prestamos`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `ahorros`
+--
+ALTER TABLE `ahorros`
+  ADD CONSTRAINT `fk_ahorros_usuarios` FOREIGN KEY (`usuarioId`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `prestamos`
+--
+ALTER TABLE `prestamos`
+  ADD CONSTRAINT `fk_prestamos_usuarios` FOREIGN KEY (`usuarioId`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `usuarios`

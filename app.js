@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const pool = require('./conexion');
 
 const indexRouter = require('./routes/index');
 const usuarioRouter = require('./routes/usuarios');
@@ -23,12 +22,11 @@ app.use(express.static(path.join(__dirname, 'views')));
 
 app.use('/index', indexRouter);
 app.use('/usuarios', usuarioRouter);
-app.use('/cuentas', cuentaRouter);
+app.use('/cuentas', cuentaRouter); // Asegúrate de que esta línea está presente
 app.use('/cooperativas', cooperativaRouter);
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
 });
-app.use(express.static(path.join(__dirname, 'views')));
 
 module.exports = app;

@@ -1,24 +1,19 @@
 var express = require('express');
 var router = express.Router();
-var cuentaController = require('../controllers/cuentas');
+var cuentasController = require('../controllers/cuentas');
 
-// Añadir cuentas
-router.post('/prestamos', (req, res) => cuentaController.AñadirCuentaPrestamo(req, res));
-router.post('/ahorros', (req, res) => cuentaController.AñadirCuentaAhorro(req, res));
+router.post('/prestamos', (req, res) => cuentasController.AñadirCuentaPrestamo(req, res));
+router.post('/ahorros', (req, res) => cuentasController.AñadirCuentaAhorro(req, res));
 
-// Editar cuentas
-router.put('/prestamos/:id', (req, res) => cuentaController.EditarCuentaPrestamo(req, res));
-router.put('/ahorros/:id', (req, res) => cuentaController.EditarCuentaAhorro(req, res));
+router.put('/prestamos/:id', (req, res) => cuentasController.EditarCuentaPrestamo(req, res));
+router.put('/ahorros/:id', (req, res) => cuentasController.EditarCuentaAhorro(req, res));
 
-// Eliminar cuentas
-router.delete('/prestamos/:id', (req, res) => cuentaController.EliminarCuentaPrestamo(req, res));
+router.delete('/prestamos/:id', (req, res) => cuentasController.EliminarCuentaPrestamo(req, res));
+router.delete('/ahorros/:id', (req, res) => cuentasController.EliminarCuentaAhorro(req, res));
 
-router.delete('/ahorros/:id', (req, res) => cuentaController.EliminarCuentaAhorro(req, res));
+router.get('/prestamos/:cuentaId/proximafecha', cuentasController.MostrarProximaFechaPago);
 
-// Mostrar próxima fecha de pago
-router.get('/:id/proximafecha', (req, res) => cuentaController.MostrarProximaFechaPago(req, res));
+router.get('/usuarios/:usuarioId/cuentas', cuentasController.MostrarCuentasUsuario);
 
-// Mostrar resumen por tipos de cuentas
-router.get('/resumen/cuentas', (req, res) => cuentaController.MostrarResumenCuentas(req, res));
-
+router.get('/resumen/cuentas', cuentasController.MostrarResumenCuentas);
 module.exports = router;

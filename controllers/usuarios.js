@@ -43,10 +43,6 @@ class UsuarioController {
             .catch(error => res.status(500).json({ error: error.message }));
     }
 
-    ObtenerCuentasUsuario(req, res) {
-        // Aquí podemos integrar funciones adicionales para obtener cuentas de usuario
-        // Por ahora mantendremos la lógica básica y después la ajustaremos
-    }
 }
 
 module.exports = new UsuarioController();

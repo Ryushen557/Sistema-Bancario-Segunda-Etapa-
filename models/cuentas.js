@@ -73,9 +73,12 @@ class CuentasModel {
 
     static mostrarProximaFechaPago(id) {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT fechaProximoPago FROM cuentas WHERE id = ? AND tipo = ?', [id, 'prestamo'], (error, results) => {
+            pool.query('SELECT fechaProximoPago FROM prestamos WHERE id = ?', [id], (error, results) => {
                 if (error) {
                     return reject(error);
+                }
+                if (results.length === 0) {
+                    return reject(new Error('No se encontró la cuenta de préstamo'));
                 }
                 resolve(results[0].fechaProximoPago);
             });
@@ -84,16 +87,36 @@ class CuentasModel {
 
     static mostrarResumenCuentas() {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT tipo, SUM(balance) AS totalBalance, AVG(tasaInteres) AS promedioTasaInteres FROM cuentas GROUP BY tipo', (error, results) => {
+            const query = `
+                SELECT 'prestamo' AS tipo, SUM(balance) AS totalBalance, AVG(tasaInteres) AS promedioTasaInteres FROM prestamos
+                UNION ALL
+                SELECT 'ahorro' AS tipo, SUM(balance) AS totalBalance, AVG(tasaInteres) AS promedioTasaInteres FROM ahorros`;
+            pool.promise().query(query)
+                .then(([results]) => {
+                    const resumen = results.reduce((acc, row) => {
+                        acc[`total${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.totalBalance;
+                        acc[`promedioTasaInteres${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.promedioTasaInteres;
+                        return acc;
+                    }, {});
+                    resolve(resumen);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+
+    static mostrarCuentasUsuario(usuarioId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 'prestamo' AS tipo, id, balance, tasaInteres FROM prestamos WHERE usuarioId = ?
+                UNION ALL
+                SELECT 'ahorro' AS tipo, id, balance, tasaInteres FROM ahorros WHERE usuarioId = ?`;
+            pool.query(query, [usuarioId, usuarioId], (error, results) => {
                 if (error) {
                     return reject(error);
                 }
-                const resumen = results.reduce((acc, row) => {
-                    acc[`total${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.totalBalance;
-                    acc[`promedioTasaInteres${row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}`] = row.promedioTasaInteres;
-                    return acc;
-                }, {});
-                resolve(resumen);
+                resolve(results);
             });
         });
     }
