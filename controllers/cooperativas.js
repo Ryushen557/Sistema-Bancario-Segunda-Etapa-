@@ -9,6 +9,20 @@ class CooperativaController {
             .catch(error => res.status(500).json({ error: error.message }));
     }
 
+    EditarCooperativa(req, res) {
+        const { id } = req.params;
+        const { nombre} = req.body;
+        CooperativaModel.editarCooperativa(id, { nombre })
+            .then(results => res.json({ mensaje: 'Cooperativa actualizada', usuario: { id, nombre, email } }))
+            .catch(error => res.status(500).json({ error: error.message }));
+    }
+    BorrarCooperativa(req, res) {
+        const { id } = req.params;
+        CooperativaModel.borrarCooperativa(id)
+            .then(results => res.json({ mensaje: 'Cooperativa eliminada' }))
+            .catch(error => res.status(500).json({ error: error.message }));
+    }
+    
     EliminarUsuarioDeCooperativa(req, res) {
         const { cooperativaId, usuarioId } = req.params;
         CooperativaModel.eliminarUsuarioDeCooperativa(cooperativaId, usuarioId)
@@ -42,5 +56,4 @@ class CooperativaController {
             .catch(error => res.status(500).json({ error: error.message }));
     }
 }
-
 module.exports = new CooperativaController();

@@ -29,6 +29,29 @@ class CooperativaModel {
             });
         });
     }
+    
+    static editarCooperativa(id, cooperativa) {
+        return new Promise((resolve, reject) => {
+            const { nombre } = cooperativa;
+            pool.query('UPDATE cooperativas SET nombre = ? WHERE id = ?', [nombre, id], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+    }
+
+    static borrarCooperativa(id) {
+        return new Promise((resolve, reject) => {
+            pool.query('DELETE FROM cooperativas WHERE id = ?', [id], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+    }
 
     static eliminarUsuarioDeCooperativa(cooperativaId, usuarioId) {
         return new Promise((resolve, reject) => {
@@ -90,5 +113,4 @@ class CooperativaModel {
         });
     }
 }
-
 module.exports = CooperativaModel;
